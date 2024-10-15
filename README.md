@@ -1,7 +1,5 @@
 # Figures
-Scripts used for generating the figures in the article Petkantchin et al.
-
-TODO add DOI
+Scripts used for generating the figures in the article Petkantchin et al. [Generating brain-wide connectome using synthetic axonal morphologies](https://doi.org/10.1101/2024.10.04.616605).
 
 ## Clustered vs. sampled presubiculum axons
 
@@ -10,7 +8,7 @@ TODO add DOI
 
 ## Clustered vs. synthesized MOp5 axons
 ### Flat map plot
-Used [plot_multiple_morphs.py](plot_flatmap_h5/plot_multiple_morphs.py) with the MOp5 morphologies of the input dataset, and the synthesized ones. 
+Used [plot_multiple_morphs.py](plot_flatmap_h5/plot_multiple_morphs.py) with the MOp5 morphologies of the input dataset, and the synthesized ones.
 ### Morphometrical comparison of tufts and trunks
 Used [compute_scores.py](compute_scores.py) on the tufts and trunks of the biological and synthesized axons, from the MOp5 region.
 ### Lengths in regions

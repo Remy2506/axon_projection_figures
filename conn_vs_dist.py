@@ -118,47 +118,50 @@ print("Dimension of a voxel in um : ", voxel_dx)
 # compute the distance between the center of each region to the others
 dists_dict = {}
 borders_dict = {}
-with h5py.File('/gpfs/bbp.cscs.ch/data/project/proj135/home/petkantc/axon/axonal-projection/axon_projection/validation/inputs/region_masks.h5', 'r') as f:
-    for reg in ROI:
-        if reg != 'MOp':
-            continue
-        dists = []
-        id_reg = list(region_map.find(reg, 'acronym'))[0]
-        dataset = f[str(id_reg)]
-        # convert the dataset to a numpy array
-        voxels = dataset[:]
-        borders_dict[reg] = np.load(reg+'.npy') # get_border_voxels(voxels)
-        # save it to not recompute
-        # np.save(reg+'.npy', borders_dict[reg])
-        # compute the center of the data, in um
-        center = np.mean(voxels, axis=0) #* voxel_dx
-        center = np.array([center])
-        print(center)
-        for reg_other in ROI:
-            print("Computing min distance for target region ", reg_other)
-            if reg_other == "MOp":
-                dist = 0.
-                dists.append(dist)
-                continue
-            id_reg = list(region_map.find(reg_other, 'acronym'))[0]
-            dataset = f[str(id_reg)]
-            voxels_other = dataset[:]
-            borders_dict[reg_other] = np.load(reg_other+'.npy') # get_border_voxels(voxels_other)
-            # save it to not recompute
-            # np.save(reg_other+'.npy', borders_dict[reg_other])
-            # center_other = np.mean(voxels, axis=0)# * voxel_dx
-            # using centers of regions
-            # dist = np.linalg.norm(center - center_other)
-            # using closest points
-            # dist = min_distance_between_sets(center, voxels_other) * voxel_dx
-            # using volume borders
-            dist = min_distance_between_sets(borders_dict[reg], borders_dict[reg_other]) * voxel_dx
-            dists.append(dist)
-        dists_dict[reg] = dists
+# with h5py.File('/gpfs/bbp.cscs.ch/data/project/proj135/home/petkantc/axon/axonal-projection/axon_projection/validation/inputs/region_masks.h5', 'r') as f:
+#     for reg in ROI:
+#         if reg != 'MOp':
+#             continue
+#         dists = []
+#         id_reg = list(region_map.find(reg, 'acronym'))[0]
+#         dataset = f[str(id_reg)]
+#         # convert the dataset to a numpy array
+#         voxels = dataset[:]
+#         borders_dict[reg] = np.load(reg+'.npy') # get_border_voxels(voxels)
+#         # save it to not recompute
+#         # np.save(reg+'.npy', borders_dict[reg])
+#         # compute the center of the data, in um
+#         center = np.mean(voxels, axis=0) #* voxel_dx
+#         center = np.array([center])
+#         print(center)
+#         for reg_other in ROI:
+#             print("Computing min distance for target region ", reg_other)
+#             if reg_other == "MOp":
+#                 dist = 0.
+#                 dists.append(dist)
+#                 continue
+#             id_reg = list(region_map.find(reg_other, 'acronym'))[0]
+#             dataset = f[str(id_reg)]
+#             voxels_other = dataset[:]
+#             borders_dict[reg_other] = np.load(reg_other+'.npy') # get_border_voxels(voxels_other)
+#             # save it to not recompute
+#             # np.save(reg_other+'.npy', borders_dict[reg_other])
+#             # center_other = np.mean(voxels, axis=0)# * voxel_dx
+#             # using centers of regions
+#             # dist = np.linalg.norm(center - center_other)
+#             # using closest points
+#             # dist = min_distance_between_sets(center, voxels_other) * voxel_dx
+#             # using volume borders
+#             dist = min_distance_between_sets(borders_dict[reg], borders_dict[reg_other]) * voxel_dx
+#             dists.append(dist)
+#         dists_dict[reg] = dists
 
-# and compile that in a df
-dists_df = pd.DataFrame(dists_dict, index=ROI)
-dists_df = dists_df.T
+# # and compile that in a df
+# dists_df = pd.DataFrame(dists_dict, index=ROI)
+# dists_df = dists_df.T
+# print(dists_df)
+# dists_df.to_csv("dists_df.csv")
+dists_df = pd.read_csv("dists_df.csv", index_col=0)
 print(dists_df)
 # load the number of connections for each pathway
 conns_synth_df = pd.read_csv("/gpfs/bbp.cscs.ch/data/project/proj135/home/petkantc/axon/"
@@ -184,7 +187,7 @@ def get_distance(row):
     return int(dists_df.loc[source, target]) # when using cluster centers
 
 dfs_to_process = [conns_synth_df, conns_local_df, conns_bio_df]
-nb_axons = [1695., 1695., 65.]
+nb_axons = [1695., 1695., 63.]
 for i, df in enumerate(dfs_to_process):
     df['source_region'] = 'MOp'
     df.rename(columns={'parent_region': 'target_region'}, inplace=True)
